@@ -24,7 +24,7 @@ integer::function = 0, flowRegime = 0, counter=0
 real::pipDiam, pipLen, pipVel, pipRough, reynolds, flow, friction, head
 character(len=20)::pipeType
 character(len=50),dimension(2)::temp
-
+logical::temp=.false.
 
 type roughnessTable
         character(len=20),dimension(8) :: types
@@ -78,8 +78,17 @@ implicit none
 write(*,*) "Please enter pipe diameter, velocity, and length in that order:"
 read(*,*) pipeDiam, pipeVel, pipeLen
 write(*,*) "Great, now we need the pipe type:"
-read(*,*) pipeType
-
+do while temp==.FALSE.
+     do counter=0,7
+          if trim(table%types(counter))==trim(pipType)
+               temp=.true.
+               pipRough=table%values(counter)
+          end if
+     end do
+     if temp==.false.
+          write(*,*) "Please enter a valid type."
+     end if
+end do
 
 
 
