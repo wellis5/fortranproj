@@ -1,1 +1,8 @@
-!Roughness association for pipe type here
+plastic	0.0000007
+drawn 0.0000016
+steel 0.000046
+galvanized_iron	0.00015 
+coated_iron 0.00012
+uncoated_iron 0.00024
+concrete 0.00012
+riveted_steel 0.0018

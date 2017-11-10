@@ -6,10 +6,13 @@
 !  AUTHOR:Tanner Jones
 !  CLASS: CSCI260A
 !  DATE WRITTEN:Nov. 8
-!  LAST REVISION:Nov. 8
+!  LAST REVISION:Nov. 10
 !  DESCRIPTION: A Program used to analyse pipe flow. Not sure deets
 !  VARIABLES USED:
 !    NAME:           TYPE:     COMMENT:
+!
+!
+!
 !
 !
 !
@@ -17,9 +20,31 @@
 Program Pipefa
 Implicit None  !Must explicitly declare all variables
 ! Declare the variables and initialize.
-integer::function = 0, flowregime = 0
-real::pipdiam, piplen, pipvel, piprough, reynolds, flow, friction, head
+integer::function = 0, flowRegime = 0, counter=0
+real::pipDiam, pipLen, pipVel, pipRough, reynolds, flow, friction, head
+character(len=20)::pipeType
+character(len=50),dimension(2)::temp
 
+
+type roughnessTable
+        character(len=20),dimension(8) :: types
+        real,dimension(8) :: values
+endtype roughnessTable
+
+type(roughnessTable) :: table
+
+
+
+
+!DON'T FORGET TO CHANGE UNDERSCORES TO SPACES AFTER READING IN FILE!!!
+open(unit=100, file='table.txt', status='OLD', action='READ')
+        do counter=0,7
+               read(100,*) temp
+               table%types(counter) = temp(1)
+               table%values(counter) = temp(2)
+        end do
+
+               
 
 
 ! Code the Civ Problem Here
@@ -50,6 +75,14 @@ end do
 
 subroutine headloss()
 implicit none
+write(*,*) "Please enter pipe diameter, velocity, and length in that order:"
+read(*,*) pipeDiam, pipeVel, pipeLen
+write(*,*) "Great, now we need the pipe type:"
+read(*,*) pipeType
+
+
+
+
 end subroutine headloss
 
 subroutine flowrate()
