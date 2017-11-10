@@ -17,19 +17,13 @@
 Program Pipefa
 Implicit None  !Must explicitly declare all variables
 ! Declare the variables and initialize.
-integer::function = 0, flowregime = 0, progchoice = 0
+integer::function = 0, flowregime = 0
 real::pipdiam, piplen, pipvel, piprough, reynolds, flow, friction, head
 
 
-!Code the Comp Sci Problem Here
-
-do while(progchoice==0)
-
-end do
-
 
 ! Code the Civ Problem Here
-do while (progchoice==1)
+do while (1==1)
         write(*,*) ":-------------------------------------------------------"
         write(*,*) ":-Please select the function you would like to use(1-3)-"
         write(*,*) ":---1) Determine head loss------------------------------"
@@ -53,4 +47,17 @@ end do
    Write(*,*)
    Write(*,*) ' Have a Great Afternoon!!! '
    Write(*,*)
+
+subroutine headloss()
+implicit none
+end subroutine headloss
+
+subroutine flowrate()
+implicit none
+end subroutine flowrate
+
+subroutine pipediam()
+implicit none
+end subroutine pipediam
+
 End Program   !Pipefa
