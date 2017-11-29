@@ -43,7 +43,7 @@ open(unit=100, file='table.txt', status='OLD', action='READ')
         do counter=0,7
                read(100,*) temp
                table%types(counter) = temp(1)
-               read(trim(temp(2)), *) table%values(counter)
+!               read(trim(temp(2)), *) table%values(counter)
         end do
 
                
@@ -94,7 +94,8 @@ write(*,*) "Please enter pipe diameter, velocity, and length in that order:"
 read(*,*) pipDiam, pipVel, pipLen
 write(*,*) "Great, now we need the pipe type:"
 do while (templog.EQV..FALSE.)
-
+write(*,*) "Please enter the type:"
+read(*,*) pipType
      do counter=1,8
           if (trim(table%types(counter))==trim(pipType)) then
                templog=.true.
@@ -144,7 +145,7 @@ real::relrough, NR
 real::f,A, length,temp  !friction factor
 real, parameter::viscosity  = 0.0000008297
 
-
+do
 WRITE(*,*) 'please enter the type of pipe'
 READ(*,*) pipetype
 
@@ -166,6 +167,7 @@ DO i=1,8
 	END IF
 	
 END DO
+end do
 	WRITE(*,*)
 	WRITE(*,*) 'What is the desired headloss?'
 	READ(*,*) headloss
