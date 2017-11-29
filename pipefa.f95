@@ -56,15 +56,18 @@ do while (1==1)
         write(*,*) ":---1) Determine head loss------------------------------"
         write(*,*) ":---2) Determine flow rate of water---------------------"
         write(*,*) ":---3) Calculate pipe diameter--------------------------"
+        write(*,*) ":---4) Exit---------------------------------------------"
         write(*,*) ":-------------------------------------------------------"
         read(*,*) function
         select case (function)
                 case (1)
                         CALL headloss(table)
                 case (2)
-!			Call flowrate
+			Call flowrate(table)
                 case (3)
 !			call pipediam	
+                case (4)
+                        exit
                 case default
                    write(*,*) "That is not a valid option"
 	end select 
@@ -133,12 +136,12 @@ end subroutine headloss
 
 
 
-subroutine flowrate(table, flow)
+subroutine flowrate(table)
 
 real::diameter, headloss
 character(len=20)::pipetype
 type(roughnessTable), intent(in)::table
-real, intent(out)::flow
+real::flow
 integer::err, i=0 
 real::roughness,v
 real::relrough, NR
@@ -151,7 +154,7 @@ READ(*,*) pipetype
 
 DO i=1,8
 
-        IF(table%types(i) == pipetype)THEN
+        IF(trim(table%types(i)) == trim(pipetype))THEN
               roughness = table%values(i)
 	ELSE
 		WRITE(*,*)'plastic'
@@ -216,6 +219,7 @@ v = A/(sqrt(f))
 ! now we solve for the flow 
 
 flow  = v*3.14159*(diameter**2)
+write(*,*) "The flowrate is ", flow
 
 
 
