@@ -233,16 +233,14 @@ end subroutine flowrate
 
 subroutine pipediam(table)
 implicit none
-integer::function = 0, flowRegime = 0, counter=0
-real::pipDiam, pipLen, pipVel, pipRough, reynolds, flow, friction, head, kinVisco=0.0000008297, pi=3.14159265359, g=9.81
-character(len=20)::pipType
-character(len=50),dimension(2)::temp
+
+
+
+REAL::f,length,q,headloss,roughness, relrough,D,
+CHARACTER(len=20)::pipeType
+real, parameter::viscosity  = 0.0000008297
+type(roughnessTable)::table
 logical::templog=.false.
-
-type(roughnessTable) :: table
-
-
-
 write(*,*) "First we'll get the pipe roughness."
 do while (templog.EQV..FALSE.)
      do counter=1,8
@@ -257,11 +255,30 @@ do while (templog.EQV..FALSE.)
      end if
 end do
 
+WRITE(*,*) 'What is the flow (m^3/s)?'
+READ(*,*) q
+WRITE(*,*) 'What is the head loss?'
+READ(*,*) headloss
+WRITE(*,*) 'What is the pipe length'
+READ(*,*) length
 
+DO
 
-end subroutine pipediam
+!Assume a friction factor of 0.01
+f = 0.01
+DO while (abs(temp-f)/f >0.01)
+	temp = f
+	! calculated diameter
+	D = ((8*length*q**2)/(headloss*9.81*pi**2))**0.2
+	! caluculate relative roughness
+	relrough = D/roughness
+	velocity = q/(0.25*pi*D**2)
+	NR = velocity*D/viscosity
+	
+	f=0.25/(LOG((1/(3.7*(1/relrough))) + (5.74/(NR**0.9)))**2)
+END DO
+WRITE(*,*) 'diameter = ',D,'meters'
 
-
-
+END SUBROUTINE pipediam
 
 End Program   !Pipefa
