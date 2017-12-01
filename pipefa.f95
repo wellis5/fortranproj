@@ -65,7 +65,7 @@ do while (1==1)
                 case (2)
 			Call flowrate(table)
                 case (3)
-!			call pipediam	
+			call pipediam(table)	
                 case (4)
                         exit
                 case default
@@ -119,7 +119,7 @@ WRITE(*,*) "Our relative roughness is ", pipRough
 flow=pipVel*(pi*0.25*pipDiam*pipDiam)
 
 IF (reynolds >= 4000) then
-     friction=0.25/(LOG((1/(3.7*(1/pipRough))) + (5.74/(reynolds**0.9)))**2)
+     friction=0.25/(LOG10((1/(3.7*(pipRough))) + (5.74/(reynolds**0.9)))**2)
 ELSE IF (reynolds <= 2000) then 
      friction=64/reynolds
 ELSE
@@ -147,31 +147,31 @@ real::roughness,v
 real::relrough, NR
 real::f,A, length,temp  !friction factor
 real, parameter::viscosity  = 0.0000008297
+logical::templog=.false.
 
-do
-WRITE(*,*) 'please enter the type of pipe'
-READ(*,*) pipetype
 
-DO i=1,8
 
-        IF(trim(table%types(i)) == trim(pipetype))THEN
-              roughness = table%values(i)
-	ELSE
-		WRITE(*,*)'plastic'
-		WRITE(*,*)'drawn'
-		WRITE(*,*)'steel'
-		WRITE(*,*)'galvanized_iron'
-		WRITE(*,*)'coated_iron'
-		WRITE(*,*)'uncoated_iron'
-		WRITE(*,*)'concrete'
-		WRITE(*,*)'riveted_steel'
-		WRITE(*,*)'Enter pipe type from the above table.'
-		READ(*,*) pipetype
-	END IF
-	
-END DO
+
+write(*,*) "We need the pipe type:"
+do while (templog.EQV..FALSE.)
+write(*,*) "Please enter the type:"
+read(*,*) pipetype
+     do counter=1,8
+          if (trim(table%types(counter))==trim(pipetype)) then
+               templog=.true.
+               roughness=table%values(counter)
+          end if
+     end do
+     if (templog.EQV..false.) then
+          write(*,*) "Please enter a valid type."
+          write(*,*) table%types
+     end if
 end do
-	WRITE(*,*)
+
+
+
+
+WRITE(*,*)
 	WRITE(*,*) 'What is the desired headloss?'
 	READ(*,*) headloss
 	WRITE(*,*)
@@ -192,7 +192,7 @@ f = 0.01
 A = sqrt((2*g*diameter*headloss)/length)
 
 DO 
-	f = temp
+	temp=f
 	
 	v = A/(sqrt(f))
 	
@@ -204,7 +204,7 @@ DO
 		WRITE(*,*) 'flow is transitional, cannot calculate flow'
 		STOP
 	ELSE
-		f=0.25/(LOG((1/(3.7*(1/relrough))) + (5.74/(NR**0.9)))**2)
+		f=0.25/(LOG10((1/(3.7*(relrough))) + (5.74/(NR**0.9)))**2)
 	END IF
 	
 	IF( abs(temp-f)/f <= 0.01) EXIT
@@ -236,15 +236,17 @@ implicit none
 
 
 
-REAL::f,length,q,headloss,roughness, relrough,D,
+REAL::f,length,q,headloss,roughness, relrough,D, temp, velocity, NR, A
 CHARACTER(len=20)::pipeType
 real, parameter::viscosity  = 0.0000008297
 type(roughnessTable)::table
 logical::templog=.false.
 write(*,*) "First we'll get the pipe roughness."
 do while (templog.EQV..FALSE.)
+Write(*,*) "Please enter pipe type"
+read(*,*) pipeType
      do counter=1,8
-          if (trim(table%types(counter))==trim(pipType)) then
+          if (trim(table%types(counter))==trim(pipeType)) then
                templog=.true.
                pipRough=table%values(counter)
           end if
@@ -261,12 +263,11 @@ WRITE(*,*) 'What is the head loss?'
 READ(*,*) headloss
 WRITE(*,*) 'What is the pipe length'
 READ(*,*) length
-
-DO
+relrough = D/roughness
 
 !Assume a friction factor of 0.01
 f = 0.01
-DO while (abs(temp-f)/f >0.01)
+DO
 	temp = f
 	! calculated diameter
 	D = ((8*length*q**2)/(headloss*9.81*pi**2))**0.2
@@ -275,10 +276,14 @@ DO while (abs(temp-f)/f >0.01)
 	velocity = q/(0.25*pi*D**2)
 	NR = velocity*D/viscosity
 	
-	f=0.25/(LOG((1/(3.7*(1/relrough))) + (5.74/(NR**0.9)))**2)
+	f=0.25/(LOG10((1/(3.7*(relrough))) + (5.74/(NR**0.9)))**2)
+	IF( abs(temp-f)/f <= 0.01) EXIT
+	
 END DO
-WRITE(*,*) 'diameter = ',D,'meters'
-
+	WRITE(*,*) 'diameter = ',D,'meters'
+write(*,*)
+write(*,*)
+write(*,*)
 END SUBROUTINE pipediam
 
 End Program   !Pipefa
