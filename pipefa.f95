@@ -43,7 +43,7 @@ open(unit=100, file='table.txt', status='OLD', action='READ')
         do counter=0,7
                read(100,*) temp
                table%types(counter) = temp(1)
-!               read(trim(temp(2)), *) table%values(counter)
+               read(trim(temp(2)), *) table%values(counter)
         end do
 
                
@@ -110,7 +110,7 @@ read(*,*) pipType
           write(*,*) table%types
      end if
 end do
-pipRough=pipRough/pipDiam
+pipRough=pipDiam/pipRough
 reynolds = (pipVel*pipDiam)/kinVisco
 WRITE(*,*) "For 25 degrees C, our kinematic viscosity is ", kinVisco
 WRITE(*,*) "Our relative roughness is ", pipRough
